@@ -283,3 +283,13 @@ Examples
             state: started
         - name: echo the hostname of the vm
           shell: hostname
+      
+ 
+          - hosts: "{{host}}"
+  tasks:    
+  - name: Install firefox    
+    win_chocolatey:    
+      name: firefox
+      
+      
+          
