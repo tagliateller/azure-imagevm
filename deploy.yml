@@ -1,0 +1,212 @@
+# Create or update a template deployment based on a uri to the template and parameters specified inline.
+# This deploys a VM with SSH support for a given public key, then stores the result in 'azure_vms'. The result is then
+# used to create a new host group. This host group is then used to wait for each instance to respond to the public IP SSH.
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Destroy Azure Deploy
+      azure_rm_deployment:
+        state: absent
+        subscription_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        resource_group_name: dev-ops-cle
+
+    - name: Create Azure Deploy
+      Ansible Documentation
+Docs » azure_rm_deployment - Create or destroy Azure Resource Manager template deployments
+azure_rm_deployment - Create or destroy Azure Resource Manager template deployments
+New in version 2.1.
+
+Synopsis
+Requirements
+Parameters
+Notes
+Examples
+Return Values
+Status
+Maintenance
+Author
+Synopsis
+Create or destroy Azure Resource Manager template deployments via the Azure SDK for Python. You can find some quick start templates in GitHub here https://github.com/azure/azure-quickstart-templates. For more information on Azue resource manager templates see https://azure.microsoft.com/en-us/documentation/articles/resource-group-template-deploy/.
+Requirements
+The below requirements are needed on the host that executes this module.
+
+python >= 2.7
+azure >= 2.0.0
+Parameters
+Parameter	Choices/Defaults	Comments
+ad_user		
+Active Directory username. Use when authenticating with an Active Directory user rather than service principal.
+adfs_authority_url 
+(added in 2.6)
+Default:
+None
+Azure AD authority url. Use when authenticating with Username/password, and has your own ADFS authority.
+api_profile 
+(added in 2.5)
+Default:
+latest
+Selects an API profile to use when communicating with Azure services. Default value of latest is appropriate for public clouds; future values will allow use with Azure Stack.
+append_tags 
+bool
+Choices:
+no
+yes ←
+Use to control if tags field is canonical or just appends to existing tags. When canonical, any tags not found in the tags parameter will be removed from the object's metadata.
+auth_source 
+(added in 2.5)
+Choices:
+auto
+cli
+credential_file
+env
+msi
+Controls the source of the credentials to use for authentication.
+If not specified, ANSIBLE_AZURE_AUTH_SOURCE environment variable will be used and default to auto if variable is not defined.
+auto will follow the default precedence of module parameters -> environment variables -> default profile in credential file ~/.azure/credentials.
+When set to cli, the credentials will be sources from the default Azure CLI profile.
+Can also be set via the ANSIBLE_AZURE_AUTH_SOURCE environment variable.
+When set to msi, the host machine must be an azure resource with an enabled MSI extension. subscription_id or the environment variable AZURE_SUBSCRIPTION_ID can be used to identify the subscription ID if the resource is granted access to more than one subscription, otherwise the first subscription is chosen.
+The msi was added in Ansible 2.6.
+cert_validation_mode 
+(added in 2.5)
+Choices:
+validate
+ignore
+Controls the certificate validation behavior for Azure endpoints. By default, all modules will validate the server certificate, but when an HTTPS proxy is in use, or against Azure Stack, it may be necessary to disable this behavior by passing ignore. Can also be set via credential file profile or the AZURE_CERT_VALIDATION environment variable.
+client_id		
+Azure client ID. Use when authenticating with a Service Principal.
+cloud_environment 
+(added in 2.4)
+Default:
+AzureCloud
+For cloud environments other than the US public cloud, the environment name (as defined by Azure Python SDK, eg, AzureChinaCloud, AzureUSGovernment), or a metadata discovery endpoint URL (required for Azure Stack). Can also be set via credential file profile or the AZURE_CLOUD_ENVIRONMENT environment variable.
+deployment_mode	
+Choices:
+complete
+incremental ←
+In incremental mode, resources are deployed without deleting existing resources that are not included in the template. In complete mode resources are deployed and existing resources in the resource group not included in the template are deleted.
+deployment_name	Default:
+ansible-arm
+The name of the deployment to be tracked in the resource group deployment history. Re-using a deployment name will overwrite the previous value in the resource group's deployment history.
+location	Default:
+westus
+The geo-locations in which the resource group will be located.
+parameters 
+dict
+A hash of all the required template variables for the deployment template. This parameter is mutually exclusive with 'parameters_link'. Either one of them is required if "state" parameter is "present".
+parameters_link		
+Uri of file containing the parameters body. This parameter is mutually exclusive with 'parameters'. Either one of them is required if "state" parameter is "present".
+password		
+Active Directory user password. Use when authenticating with an Active Directory user rather than service principal.
+profile		
+Security profile found in ~/.azure/credentials file.
+resource_group_name 
+required
+The resource group name to use or create to host the deployed template
+
+aliases: resource_group
+secret		
+Azure client secret. Use when authenticating with a Service Principal.
+state	
+Choices:
+present ←
+absent
+If state is "present", template will be created. If state is "present" and if deployment exists, it will be updated. If state is "absent", stack will be removed.
+subscription_id		
+Your Azure subscription Id.
+tags		
+Dictionary of string:string pairs to assign as metadata to the object. Metadata tags on the object will be updated with any provided values. To remove tags set append_tags option to false.
+template 
+dict
+A hash containing the templates inline. This parameter is mutually exclusive with 'template_link'. Either one of them is required if "state" parameter is "present".
+template_link		
+Uri of file containing the template body. This parameter is mutually exclusive with 'template'. Either one of them is required if "state" parameter is "present".
+tenant		
+Azure tenant ID. Use when authenticating with a Service Principal.
+wait_for_deployment_completion 
+bool
+Choices:
+no
+yes ←
+Whether or not to block until the deployment has completed.
+wait_for_deployment_polling_period	Default:
+10
+Time (in seconds) to wait between polls when waiting for deployment completion.
+
+Notes
+Note
+
+For authentication with Azure you can pass parameters, set environment variables or use a profile stored in ~/.azure/credentials. Authentication is possible using a service principal or Active Directory user. To authenticate via service principal, pass subscription_id, client_id, secret and tenant or set environment variables AZURE_SUBSCRIPTION_ID, AZURE_CLIENT_ID, AZURE_SECRET and AZURE_TENANT.
+To authenticate via Active Directory user, pass ad_user and password, or set AZURE_AD_USER and AZURE_PASSWORD in the environment.
+Alternatively, credentials can be stored in ~/.azure/credentials. This is an ini file containing a [default] section and the following keys: subscription_id, client_id, secret and tenant or subscription_id, ad_user and password. It is also possible to add additional profiles. Specify the profile by passing profile or setting AZURE_PROFILE in the environment.
+Examples
+# Destroy a template deployment
+- name: Destroy Azure Deploy
+  azure_rm_deployment:
+    state: absent
+    subscription_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    resource_group_name: dev-ops-cle
+
+# Create or update a template deployment based on uris using parameter and template links
+- name: Create Azure Deploy
+  azure_rm_deployment:
+    state: present
+    resource_group_name: dev-ops-cle
+    template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.json'
+    parameters_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-simple-linux/azuredeploy.parameters.json'
+
+# Create or update a template deployment based on a uri to the template and parameters specified inline.
+# This deploys a VM with SSH support for a given public key, then stores the result in 'azure_vms'. The result is then
+# used to create a new host group. This host group is then used to wait for each instance to respond to the public IP SSH.
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Destroy Azure Deploy
+      azure_rm_deployment:
+        state: absent
+        subscription_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        resource_group_name: dev-ops-cle
+
+    - name: Create Azure Deploy
+      azure_rm_deployment:
+        state: present
+        subscription_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+        resource_group_name: dev-ops-cle
+        parameters:
+          newStorageAccountName:
+            value: devopsclestorage1
+          adminUsername:
+            value: devopscle
+          dnsNameForPublicIP:
+            value: devopscleazure
+          location:
+            value: West US
+          vmSize:
+            value: Standard_A2
+          vmName:
+            value: ansibleSshVm
+          sshKeyData:
+            value: YOUR_SSH_PUBLIC_KEY
+        template_link: 'https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-vm-sshkey/azuredeploy.json'
+      register: azure
+
+    - name: Add new instance to host group
+      add_host:
+        hostname: "{{ item['ips'][0].public_ip }}"
+        groupname: azure_vms
+      loop: "{{ azure.deployment.instances }}"
+
+    - hosts: azure_vms
+      user: devopscle
+      tasks:
+        - name: Wait for SSH to come up
+          wait_for:
+            port: 22
+            timeout: 2000
+            state: started
+        - name: echo the hostname of the vm
+          shell: hostname
