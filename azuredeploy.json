@@ -233,6 +233,10 @@
         },
         "protectedSettings" : {
           "commandToExecute" : "powershell -ExecutionPolicy Unrestricted -File nodewin.ps1"
+            
+        https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1    
+            
+            
         }
       }
     }
