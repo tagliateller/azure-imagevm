@@ -231,7 +231,7 @@
 					]
 				},
 				"protectedSettings" : {
-					"commandToExecute" : "[concat("powershell -ExecutionPolicy Unrestricted -File ", variables('configureRemotingScriptFileName'))]"
+					"commandToExecute": "[concat("powershell -ExecutionPolicy Unrestricted -File ", variables('configureRemotingScriptFileName'))]"
 				}
 			}
 		}        
