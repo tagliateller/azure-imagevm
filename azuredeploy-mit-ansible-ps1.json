@@ -72,10 +72,8 @@
     "variables": {
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "configureRemotingScriptRepoUrl: "https://github.com/ansible/ansible/blob/devel/examples/scripts/",
-		"configureRemotingScriptFileName: "ConfigureRemotingForAnsible.ps1"
-	},
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+    },
     "resources": [
         {
             "name": "[parameters('networkInterfaceName')]",
@@ -209,32 +207,41 @@
             },
             "tags": {}
         },
-        {
-			"type" : "Microsoft.Compute/virtualMachines/extensions",
-			"name" : "[concat(resourceGroup().name, 'win' ,'/installcustomscript')]",
-			"apiVersion" : "2015-06-15",
-			"location" : "[resourceGroup().location]",
-			"tags" : {
-				"displayName" : "VirtualMachineCustomScriptExtension"
-			},
-			"dependsOn" : [
-				"[concat('Microsoft.Compute/virtualMachines/', resourceGroup().name,'win')]"
-			],
-			"properties" : {
-				"publisher" : "Microsoft.Compute",
-				"type" : "CustomScriptExtension",
-				"typeHandlerVersion" : "1.9",
-				"autoUpgradeMinorVersion" : true,
-				"settings" : {
-					"fileUris" : [
-						"[concat(variables('configureRemotingScriptRepoUrl'), variables('configureRemotingScriptFileName'))]"
-					]
-				},
-				"protectedSettings" : {
-					"commandToExecute" : "[concat("powershell -ExecutionPolicy Unrestricted -File ", variables('configureRemotingScriptFileName'))]"
-				}
-			}
-		}        
+        
+        
+        
+            {
+      "type" : "Microsoft.Compute/virtualMachines/extensions",
+      "name" : "[concat(resourceGroup().name, 'win' ,'/installcustomscript')]",
+      "apiVersion" : "2015-06-15",
+      "location" : "[resourceGroup().location]",
+      "tags" : {
+        "displayName" : "VirtualMachineCustomScriptExtension"
+      },
+      "dependsOn" : [
+        "[concat('Microsoft.Compute/virtualMachines/', resourceGroup().name,'win')]"
+      ],
+      "properties" : {
+        "publisher" : "Microsoft.Compute",
+        "type" : "CustomScriptExtension",
+        "typeHandlerVersion" : "1.9",
+        "autoUpgradeMinorVersion" : true,
+        "settings" : {
+          "fileUris" : [
+            "[concat(variables('baseTemplateUrl'), 'nodewin.ps1')]"
+          ]
+        },
+        "protectedSettings" : {
+          "commandToExecute" : "powershell -ExecutionPolicy Unrestricted -File nodewin.ps1"
+            
+        https://github.com/ansible/ansible/blob/devel/examples/scripts/ConfigureRemotingForAnsible.ps1    
+            
+            
+        }
+      }
+    }
+        
+        
     ],
     "outputs": {
         "adminUsername": {
