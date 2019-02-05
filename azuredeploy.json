@@ -211,14 +211,14 @@
         },
         {
 			"type" : "Microsoft.Compute/virtualMachines/extensions",
-			"name" : "[concat(resourceGroup().name, 'win' ,'/installcustomscript')]",
+			"name" : "[concat(resourceGroup().name, '/installcustomscript')]",
 			"apiVersion" : "2015-06-15",
 			"location" : "[resourceGroup().location]",
 			"tags" : {
 				"displayName" : "VirtualMachineCustomScriptExtension"
 			},
 			"dependsOn" : [
-				"[concat('Microsoft.Compute/virtualMachines/', resourceGroup().name,'win')]"
+				"[concat('Microsoft.Compute/virtualMachines/', resourceGroup().name)]"
 			],
 			"properties" : {
 				"publisher" : "Microsoft.Compute",
