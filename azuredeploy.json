@@ -208,33 +208,7 @@
                 "name": "[parameters('diagnosticsStorageAccountType')]"
             },
             "tags": {}
-        },
-        {
-			"type" : "Microsoft.Compute/virtualMachines/extensions",
-			"name" : "[concat(resourceGroup().name, '/installcustomscript')]",
-			"apiVersion" : "2015-06-15",
-			"location" : "[resourceGroup().location]",
-			"tags" : {
-				"displayName" : "VirtualMachineCustomScriptExtension"
-			},
-			"dependsOn" : [
-				"[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-			],
-			"properties" : {
-				"publisher" : "Microsoft.Compute",
-				"type" : "CustomScriptExtension",
-				"typeHandlerVersion" : "1.9",
-				"autoUpgradeMinorVersion" : true,
-				"settings" : {
-					"fileUris" : [
-						"[concat(variables('configureRemotingScriptRepoUrl'), variables('configureRemotingScriptFileName'))]"
-					]
-				},
-				"protectedSettings" : {
-					"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('configureRemotingScriptFileName'))]"
-				}
-			}
-		}        
+        }
     ],
     "outputs": {
         "adminUsername": {
