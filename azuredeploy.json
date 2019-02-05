@@ -218,7 +218,7 @@
 				"displayName" : "VirtualMachineCustomScriptExtension"
 			},
 			"dependsOn" : [
-				"[concat('Microsoft.Compute/virtualMachines/', resourceGroup().name)]"
+				"[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
 			],
 			"properties" : {
 				"publisher" : "Microsoft.Compute",
@@ -231,7 +231,7 @@
 					]
 				},
 				"protectedSettings" : {
-					"commandToExecute": "[concat("powershell -ExecutionPolicy Unrestricted -File ", variables('configureRemotingScriptFileName'))]"
+					"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', variables('configureRemotingScriptFileName'))]"
 				}
 			}
 		}        
