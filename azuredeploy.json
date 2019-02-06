@@ -73,7 +73,7 @@
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(resourceGroup().name,'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "configureRemotingScriptRepoUrl": "https://github.com/ansible/ansible/blob/devel/examples/scripts/",
+        "configureRemotingScriptRepoUrl": "https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/",
 		"configureRemotingScriptFileName": "ConfigureRemotingForAnsible.ps1"
 	},
     "resources": [
