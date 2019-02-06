@@ -211,7 +211,7 @@
         },
 	    {
 			"type" : "Microsoft.Compute/virtualMachines/extensions",
-			"name" : "[concat(resourceGroup().name, '/installcustomscript')]",
+			"name" : "[concat(parameters('virtualMachineName'), '/installcustomscript')]",
 			"apiVersion" : "2015-06-15",
 			"location" : "[resourceGroup().location]",
 			"tags" : {
