@@ -1,0 +1,50 @@
+---
+- hosts: win
+  gather_facts: no
+
+  vars:
+    azure_resource_group_name: imagesrg
+    
+  tasks:
+
+  - name: Install Hyper-V Feature    
+    win_feature:    
+      name: Hyper-V
+      include_management_tools: yes
+    register: win_feature
+
+  - name: Reboot server
+    win_reboot:
+    when: win_feature.reboot_required
+
+  - name: Test Switch
+    win_shell: |
+      $adapters = @(Get-NetAdapter)
+      foreach($item in $adapters){if($item.name -eq "vEthernet (InternalNATXSwitch)"){$item.ifIndex}}
+    register: interfaceindex
+
+  - name: debug 
+    debug:
+      msg: "ifIndex: {{ interfaceindex }}"
+  
+  - name: create switch
+    win_command: powershell.exe -
+    args:
+      stdin: New-VMSwitch -Name "InternalNATSwitch" -SwitchType Internal
+    when: interfaceindex == ""      
+  
+  - name: config gateway
+    win_command: powershell.exe -
+    args:
+      stdin: New-NetIPAddress -IPAddress 192.168.0.1 -PrefixLength 24 -InterfaceIndex {{ interfaceindex }}
+    when: interfaceindex != ""
+
+  - name: create network
+    win_command: powershell.exe -
+    args:
+      stdin: New-NetNat -Name "InternalNat" -InternalIPInterfaceAddressPrefix 192.168.0.0/24
+
+  - name: create linux vm
+    win_command: powershell.exe -
+    args:
+      stdin: New-VM -Name LinuxVM -MemoryStartupBytes 4GB -BootDevice VHD -VHDPath .\VMs\Linux.vhd -Path .\VMData -Generation 1 -Switch InternalNATSwitch        
