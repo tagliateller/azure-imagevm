@@ -44,6 +44,10 @@
     args:
       stdin: New-NetNat -Name "InternalNat" -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 
+  - name: createdhcp server
+    win_feature:
+      name: DHCP-Server
+
   - name: create linux vm
     win_command: powershell.exe -
     args:
